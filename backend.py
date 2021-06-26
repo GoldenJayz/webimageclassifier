@@ -29,6 +29,7 @@
 
     Next:
         1. Get a way to seperate 2 images into 2 different folders
+        2. hi
     
 """
 
