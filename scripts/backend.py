@@ -38,8 +38,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER1 = 'C:\\Users\\jmdan\\WebsiteAiImageClassifier\\tf_files\\DataSet\\Person1' 
-UPLOAD_FOLDER2 = 'C:\\Users\\jmdan\\WebsiteAiImageClassifier\\tf_files\\DataSet\\Person2' 
+UPLOAD_FOLDER1 = 'C:\\Users\\jmdan\\WebsiteAiImageClassifier\\tf_files' 
 # make config for these
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
@@ -51,33 +50,19 @@ def allowed_file(filename):
 @app.route("/", methods=["POST", "GET"])
 def home():
     if request.method == "POST":
-        # if 'file' not in request.files:
-            # return redirect(request.url)
-
-
-
-    
         file1 = request.files['file1']
-        file2 = request.files['file2']
-        if file1.filename == '' or file2.filename == '':
+        if file1.filename == '':
             return redirect(request.url)
-        elif file1 and allowed_file(file1.filename) or file2 and allowed_file(file2.filename):
+        elif file1 and allowed_file(file1.filename):
             if file1:
                 filename = secure_filename(file1.filename)
                 file1.save(os.path.join(UPLOAD_FOLDER1, filename))
                 os.system(r"C:\Users\jmdan\WebsiteAiImageClassifier")
-                # os.system("python -m scripts.retrain  --bottleneck_dir=tf_files/bottlenecks  --how_many_training_steps 500 --model_dir=tf_files/models/mobilenet_0.50_224  --architecture=mobilenet_0.50_224  --summaries_dir=tf_files/training_summaries/mobilenet_0.50_224   --output_graph=tf_files/retrained_graph.pb --output_labels=tf_files/retrained_labels.txt --image_dir=tf_files/DataSet/")
-            if file2:
-                filename = secure_filename(file2.filename)
-                file2.save(os.path.join(UPLOAD_FOLDER2, filename))
-                os.system(r"C:\Users\jmdan\WebsiteAiImageClassifier")
-                # os.system("python -m scripts.retrain  --bottleneck_dir=tf_files/bottlenecks  --how_many_training_steps 500 --model_dir=tf_files/models/mobilenet_0.50_224  --architecture=mobilenet_0.50_224  --summaries_dir=tf_files/training_summaries/mobilenet_0.50_224   --output_graph=tf_files/retrained_graph.pb --output_labels=tf_files/retrained_labels.txt --image_dir=tf_files/DataSet/")
-            os.system("python -m scripts.retrain  --bottleneck_dir=tf_files/bottlenecks  --how_many_training_steps 500 --model_dir=tf_files/models/mobilenet_0.50_224  --architecture=mobilenet_0.50_224  --summaries_dir=tf_files/training_summaries/mobilenet_0.50_224   --output_graph=tf_files/retrained_graph.pb --output_labels=tf_files/retrained_labels.txt --image_dir=tf_files/DataSet/")
-
+                print(filename)
+            os.system(f"python -m scripts.label_image --graph=tf_files/retrained_graph.pb   --image=tf_files/{filename}")
         else:
             return redirect(request.url)
     return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(host="192.168.1.24", port="4200", debug=True)
-
